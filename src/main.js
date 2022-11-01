@@ -57,21 +57,35 @@ const wageBrackets = async db => {
 // Salaries of non-developer employees
 const salariesOfNonDeveloperEmployees = async db => {
   const [results, _] = await db.query(`
-    SELECT employee_id, salary, job_title
-    FROM current_job_detail
-    WHERE job_title NOT LIKE "%Developer%";
+    SELECT c.employee_id, e.name, c.salary, c.job_title
+    FROM
+      current_job_detail AS c
+      LEFT JOIN
+      employee_detail AS e
+    WHERE c.employee_id = e.employee_id
+    AND c.job_title NOT LIKE "%Developer%";
   `);
 
   console.log("> Salaries of non-developer employees");
   console.table(results);
 }
 
+// Collection of functions to be applied to
+const functions = [
+  totalNumberOfEmployees,
+  higestEarningEmployeeAndJobTitle,
+  countOfSeniorDeveloperJobs,
+  wageBrackets,
+  salariesOfNonDeveloperEmployees
+]
+
 const main = _ =>  {
-  totalNumberOfEmployees(db);
-  higestEarningEmployeeAndJobTitle(db);
-  countOfSeniorDeveloperJobs(db);
-  wageBrackets(db);
-  salariesOfNonDeveloperEmployees(db);
+  // totalNumberOfEmployees(db);
+  // higestEarningEmployeeAndJobTitle(db);
+  // countOfSeniorDeveloperJobs(db);
+  // wageBrackets(db);
+  // salariesOfNonDeveloperEmployees(db);
+  functions.forEach(fun => fun(db));
 }
 
 main();
